@@ -14,7 +14,7 @@ void push(Elemento *base, int numero) {
     while (elemento_temporario->proximo != NULL) {
         elemento_temporario = elemento_temporario->proximo;
     }
-
+	
     elemento_temporario->proximo = malloc(sizeof(Elemento));
     elemento_temporario = elemento_temporario->proximo;
     elemento_temporario->proximo = NULL;
@@ -22,10 +22,30 @@ void push(Elemento *base, int numero) {
 }
 
 // retirar elemento do topo da pilha
-void pop() {}
+void pop(Elemento *base) {
+	Elemento *elemento_temporario = base;
+	Elemento *elemento_anterior;
+	
+	while (elemento_temporario->proximo != NULL) {
+		elemento_anterior = elemento_temporario;
+		elemento_temporario = elemento_temporario->proximo;
+	}
+
+	elemento_anterior->proximo = NULL;
+	free(elemento_temporario);
+
+}
 
 // exibe elemento do topo
-void elemento_topo() {}
+void elemento_topo(Elemento *base) {
+	Elemento *elemento_temporario = base;
+	
+	while(elemento_temporario->proximo != NULL) {
+		elemento_temporario = elemento_temporario->proximo;
+	}
+
+	printf("\nelemento do topo: %d\n", elemento_temporario->numero);
+}
 
 // verifica se a pilha esta vazia
 bool verifica_vazio(Elemento *base) {
@@ -37,7 +57,10 @@ bool verifica_vazio(Elemento *base) {
 }
 
 // limpa pilha
-void limpar() {}
+void limpar(Elemento *base) {
+	
+
+}
 
 void visualizar_pilha_inteira(Elemento *base) {
     Elemento *elemento_temporario = base;
@@ -51,15 +74,13 @@ void visualizar_pilha_inteira(Elemento *base) {
 int main(void) {
     // declara base da pilha
     Elemento base = {0};
-    base.proximo = NULL;
-    
-    verifica_vazio(&base);
+    base.proximo = NULL;    
 
     push(&base, 4);
     push(&base, 2);
     push(&base, 6);
+  
+	elemento_topo(&base);
 
-    verifica_vazio(&base);
-    
     return 0;
 }
