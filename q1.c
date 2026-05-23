@@ -71,15 +71,6 @@ void limpar(Elemento *base) {
     }
 }
 
-void visualizar_pilha_inteira(Elemento *base) {
-    Elemento *elemento_temporario = base;
-
-    while (elemento_temporario->proximo != NULL) {
-        elemento_temporario = elemento_temporario->proximo;
-        printf("%d\n", elemento_temporario->numero);
-    }
-}
-
 Elemento inicializar_pilha() {
     return (Elemento) {
         .numero = 0,
@@ -122,12 +113,6 @@ int soma(int primeiro_numero, int segundo_numero) {
         push(&pilha_segundo_numero, elemento_topo(&pilha_temporaria));
         pop(&pilha_temporaria);
     }
-	
-	// visualização das pilhas
-    printf("pilha primeiro numero:\n");
-    visualizar_pilha_inteira(&pilha_primeiro_numero);
-    printf("pilha segundo numero:\n");
-    visualizar_pilha_inteira(&pilha_segundo_numero);
 
 	// soma dos numeros
 	int temporaria_n1, temporaria_n2, resultado, sobe_um = 0;
@@ -137,15 +122,6 @@ int soma(int primeiro_numero, int segundo_numero) {
 		temporaria_n1 = elemento_topo(&pilha_primeiro_numero);
 		temporaria_n2 = elemento_topo(&pilha_segundo_numero);
 		
-		// verifica se a pilha está vazia para temporaria ser 0
-		if (verifica_vazio(&pilha_primeiro_numero)) {
-			temporaria_n1 = 0;
-		}
-		
-		if (verifica_vazio(&pilha_segundo_numero)) {
-			temporaria_n2 = 0;
-		}
-		
 		// soma das temporárias mais o sobe um
 		resultado = temporaria_n1 + temporaria_n2 + sobe_um;
 
@@ -153,15 +129,20 @@ int soma(int primeiro_numero, int segundo_numero) {
 		if (resultado > 9) {
 			// pega o resto
 			int temp = resultado % 10;
+
 			// coloca o resto na pilha de resultados
 			push(&pilha_resultado, temp);
 			
 			// define a dezena que vai subir na adição
 			sobe_um = (int) (resultado / 10);
-				
+
 		} else { // caso o resultado seja menor que 9 e sobe um esteja zerado
+
 			// o resultado é adicionado a pilha
 			push(&pilha_resultado, resultado);
+
+            // como o resultado e menor que 9, sobe_um e zerado
+            sobe_um = 0;
 		}
 
 
@@ -185,9 +166,13 @@ int soma(int primeiro_numero, int segundo_numero) {
 		push(&pilha_resultado, sobe_um);
 	}
 
-	printf("pilha resultado:\n");
-	visualizar_pilha_inteira(&pilha_resultado);
-    return 0;
+    resultado = 0;
+    while (!verifica_vazio(&pilha_resultado)) {
+        resultado = (resultado * 10) + elemento_topo(&pilha_resultado);
+        pop(&pilha_resultado);
+    }
+
+    return resultado;
 }
 
 int main(void) {
@@ -201,7 +186,7 @@ int main(void) {
 	scanf("%d",&n2);
 
     int resultado = soma(n1, n2);
-    //printf("%d\n", resultado);
+    printf("resultado da soma: %d\n", resultado);
 
     return 0;
 }
