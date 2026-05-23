@@ -159,12 +159,8 @@ int soma(int primeiro_numero, int segundo_numero) {
 			// define a dezena que vai subir na adição
 			sobe_um = (int) (resultado / 10);
 				
-		} else if (resultado <= 9 && sobe_um == 0) { // caso o resultado seja menor que 9 e sobe um esteja zerado
+		} else { // caso o resultado seja menor que 9 e sobe um esteja zerado
 			// o resultado é adicionado a pilha
-			push(&pilha_resultado, resultado);
-		}  else if (resultado <= 9 && sobe_um > 0) { // caso o resultado seja menor que 9 e o sobe um seja maior que 0 
-			// TODO: arrumar pra caso seja maior que 9
-			resultado += sobe_um; 
 			push(&pilha_resultado, resultado);
 		}
 
@@ -183,6 +179,12 @@ int soma(int primeiro_numero, int segundo_numero) {
 	
 	}
 	
+	// fora do loop, verifica se existe sobe_um para ser adicionado
+	// no final do resultado
+	if (sobe_um > 0) {
+		push(&pilha_resultado, sobe_um);
+	}
+
 	printf("pilha resultado:\n");
 	visualizar_pilha_inteira(&pilha_resultado);
     return 0;
