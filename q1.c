@@ -9,69 +9,90 @@ typedef struct Elemento {
 
 // inserir elemento no topo da pilha
 void push(Elemento *base, int numero) {
+    // atribui ao elemento temporario o endereco da base da pilha
     Elemento *elemento_temporario = base;
 
+    // percorre a pilha ate o final
     while (elemento_temporario->proximo != NULL) {
         elemento_temporario = elemento_temporario->proximo;
     }
 	
+    // aloca proximo elemento da pilha
     elemento_temporario->proximo = malloc(sizeof(Elemento));
+    // atribui ao elemento temporario o endereco do ultimo elemento alocado
     elemento_temporario = elemento_temporario->proximo;
+    // atribui nulo ao fim da pilha, indicando fim da lista
     elemento_temporario->proximo = NULL;
+    // armazena numero no novo elemento
     elemento_temporario->numero = numero;
 }
 
 // retirar elemento do topo da pilha
 void pop(Elemento *base) {
+    // atribui ao elemento temporario o endereco da base da pilha
 	Elemento *elemento_temporario = base;
+    // auxiliar para guardar elemento anterior
 	Elemento *elemento_anterior;
 	
+    // percorre pilha ate o fim e salva elemento anterior ao atual em auxiliar
 	while (elemento_temporario->proximo != NULL) {
 		elemento_anterior = elemento_temporario;
 		elemento_temporario = elemento_temporario->proximo;
 	}
-
+    
+    // atribui nulo ao topo da pilha
 	elemento_anterior->proximo = NULL;
+    // desaloca elemento do topo da lista
 	free(elemento_temporario);
 }
 
 // exibe elemento do topo
 int elemento_topo(Elemento *base) {
+    // atribui ao elemento temporario o endereco da base da pilha
 	Elemento *elemento_temporario = base;
 	
+    // percorre a pilha ate o final
 	while(elemento_temporario->proximo != NULL) {
 		elemento_temporario = elemento_temporario->proximo;
 	}
-
+    
+    // retorna elemento do topo da lista
 	return elemento_temporario->numero;
 }
 
 // verifica se a pilha esta vazia
 bool verifica_vazio(Elemento *base) {
+    // verifica se a pilha nao possui elementos e retirba verdadeiro caso nao
     if (base->proximo == NULL) {
         return true;
-    } else {
+    } else { // caso a lista tenha elementos, retornar falso
         return false;
     }
 }
 
 // limpa pilha
 void limpar(Elemento *base) {
+    // atribui ao elemento temporario o endereco da base da pilha
     Elemento *proximo_elemento = base;
+
     int quantidade_de_elementos = 0;
 
+    // percorre pilha ate o fim e soma um em quantidade_de_elementos para contagem de elementos
     while (proximo_elemento->proximo != NULL) {
         proximo_elemento = proximo_elemento->proximo;
         quantidade_de_elementos++;
     }
 
+    // enquanto a quantidade_de_elementos for maior que 0, exclui o topo da pilha
     while (quantidade_de_elementos > 0) {
         pop(base);
+        // decrementa elemento que acabou de ser removido da quantidade total
         quantidade_de_elementos--;
     }
 }
 
 Elemento inicializar_pilha() {
+    // define valores iniciais para uma pilha recem criada
     return (Elemento) {
         .numero = 0,
         .proximo = NULL
@@ -87,21 +108,32 @@ int soma(int primeiro_numero, int segundo_numero) {
     
 	// temporario que recebe o resto
     int temporario_cortado = primeiro_numero;
+
 	// temporario que recebe o algarismo para ser enviado a pilha temporaria
     int temporario_isolado;
+
+    // separa algarismos e insere na pilha temporaria
     while (temporario_cortado > 0) {
+        // temporario_isolado recebe o resto do temporario_cortado, o ultimo algarismo
         temporario_isolado = temporario_cortado % 10;
+
+        // temporario_cortado exclui o ultimo algarismo para proxima iteracao
         temporario_cortado = (int)(temporario_cortado / 10);
+
+        // adiciona o ultimo algarismo na pilha temporaria
         push(&pilha_temporaria, temporario_isolado);
     }
 
-	// reoganização da pilha do primeiro numero
+    // inverte ordem dos algarismos da base para o topo enquanto houver elementos na pilha
     while (!verifica_vazio(&pilha_temporaria)) {
         push(&pilha_primeiro_numero, elemento_topo(&pilha_temporaria));
         pop(&pilha_temporaria);
     }
 
+    // define novo numero a ser separado
     temporario_cortado = segundo_numero;
+
+    // separa algarismos e insere na pilha temporaria
     while (temporario_cortado > 0) {
         temporario_isolado = temporario_cortado % 10;
         temporario_cortado = (int)(temporario_cortado / 10);
@@ -166,26 +198,34 @@ int soma(int primeiro_numero, int segundo_numero) {
 		push(&pilha_resultado, sobe_um);
 	}
 
+    // zera variavel auxiliar de resultado
     resultado = 0;
+
+    // converte algarismos da pilha para um inteiro
     while (!verifica_vazio(&pilha_resultado)) {
+        // vai se adicionando o algarismo a cada classe numerica
         resultado = (resultado * 10) + elemento_topo(&pilha_resultado);
         pop(&pilha_resultado);
     }
 
+    // retorna resultado final
     return resultado;
 }
 
 int main(void) {
-
 	int n1, n2;
 
+    // recebe numeros do usuario
 	printf("insira o primeiro numero: ");
 	scanf("%d", &n1);
 
 	printf("insira o segundo numero: ");
 	scanf("%d",&n2);
 
+    // realiza operacao de soma
     int resultado = soma(n1, n2);
+
+    // saida de resultado
     printf("resultado da soma: %d\n", resultado);
 
     return 0;
