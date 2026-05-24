@@ -1,3 +1,13 @@
+/*
+ *  Autores:
+ *  	Beatriz Barauna
+ *  	Kinan Principe
+ *	
+ *	Data: 
+ *		24/05/2026
+ *
+ */
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
