@@ -85,7 +85,7 @@ void limpar(Elemento *base) {
 
     // enquanto a quantidade_de_elementos for maior que 0, exclui o topo da pilha
     while (quantidade_de_elementos > 0) {
-        pop(base);
+		pop(base);
         // decrementa elemento que acabou de ser removido da quantidade total
         quantidade_de_elementos--;
     }
@@ -99,15 +99,12 @@ Elemento inicializar_pilha() {
     };
 }
 
-int soma(int primeiro_numero, int segundo_numero) {
-    // declara base da pilha
-    Elemento pilha_temporaria = inicializar_pilha();
-    Elemento pilha_primeiro_numero = inicializar_pilha();
-    Elemento pilha_segundo_numero = inicializar_pilha();
-    Elemento pilha_resultado = inicializar_pilha();
-    
+void separador_algarismos (Elemento *pilha, int numero) {
+	
+	Elemento pilha_temporaria = inicializar_pilha();
+
 	// temporario que recebe o resto
-    int temporario_cortado = primeiro_numero;
+    int temporario_cortado = numero;
 
 	// temporario que recebe o algarismo para ser enviado a pilha temporaria
     int temporario_isolado;
@@ -124,36 +121,38 @@ int soma(int primeiro_numero, int segundo_numero) {
         push(&pilha_temporaria, temporario_isolado);
     }
 
-    // inverte ordem dos algarismos da base para o topo enquanto houver elementos na pilha
-    while (!verifica_vazio(&pilha_temporaria)) {
-        push(&pilha_primeiro_numero, elemento_topo(&pilha_temporaria));
-        pop(&pilha_temporaria);
+    // inverte ordem dos algarismos da base para o topo enquanto houver elementos na pilha7
+	printf("\npilha do numero %d", numero);
+	while (!verifica_vazio(&pilha_temporaria)) {
+        push(pilha, elemento_topo(&pilha_temporaria));
+		printf("\n\t%d", elemento_topo(pilha));
+		pop(&pilha_temporaria);
+
+		
     }
+	printf(" <- topo!!\n");
 
-    // define novo numero a ser separado
-    temporario_cortado = segundo_numero;
+}
 
-    // separa algarismos e insere na pilha temporaria
-    while (temporario_cortado > 0) {
-        temporario_isolado = temporario_cortado % 10;
-        temporario_cortado = (int)(temporario_cortado / 10);
-        push(&pilha_temporaria, temporario_isolado);
-    }
+int soma(int primeiro_numero, int segundo_numero) {
+    // declara base da pilha
+    Elemento pilha_primeiro_numero = inicializar_pilha();
+    Elemento pilha_segundo_numero = inicializar_pilha();
+    Elemento pilha_resultado = inicializar_pilha();
+	
+	// função pra separar e reorganizar a ordem do primeiro número na pilha
+	separador_algarismos(&pilha_primeiro_numero, primeiro_numero);
 
-	// reorganização da pilha do segundo numero
-    while (!verifica_vazio(&pilha_temporaria)) {
-        push(&pilha_segundo_numero, elemento_topo(&pilha_temporaria));
-        pop(&pilha_temporaria);
-    }
+	// função pra separar e reorganizar a ordem do segundo número na pilha
+	separador_algarismos(&pilha_segundo_numero, segundo_numero);
 
-	// soma dos numeros
+   	// soma dos numeros
 	int temporaria_n1, temporaria_n2, resultado, sobe_um = 0;
 
 	// enquanto as pilhas não estiverem vazias, os elementos da mesma posição irão se somas
 	while(!verifica_vazio(&pilha_primeiro_numero) || !verifica_vazio(&pilha_segundo_numero)) {
 		temporaria_n1 = elemento_topo(&pilha_primeiro_numero);
 		temporaria_n2 = elemento_topo(&pilha_segundo_numero);
-		
 		// soma das temporárias mais o sobe um
 		resultado = temporaria_n1 + temporaria_n2 + sobe_um;
 
@@ -226,7 +225,7 @@ int main(void) {
     int resultado = soma(n1, n2);
 
     // saida de resultado
-    printf("resultado da soma: %d\n", resultado);
+    printf("\nresultado da soma: %d\n", resultado);
 
     return 0;
 }
