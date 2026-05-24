@@ -121,15 +121,20 @@ void separador_algarismos (Elemento *pilha, int numero) {
         push(&pilha_temporaria, temporario_isolado);
     }
 
-    // inverte ordem dos algarismos da base para o topo enquanto houver elementos na pilha7
+	// exibe a pilha do numero 
 	printf("\npilha do numero %d", numero);
+    
+	// inverte ordem dos algarismos da base para o topo enquanto houver elementos na pilha7
 	while (!verifica_vazio(&pilha_temporaria)) {
         push(pilha, elemento_topo(&pilha_temporaria));
+
+		// exibe o elemento que está sendo adicionado na pilha
 		printf("\n\t%d", elemento_topo(pilha));
 		pop(&pilha_temporaria);
 
-		
     }
+
+	// aponta para o elemento que está no topo da pilha
 	printf(" <- topo!!\n");
 
 }
