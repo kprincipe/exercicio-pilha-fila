@@ -56,32 +56,39 @@ void remover_elemento(Pacote *base) {
     free(primerio_pacote);
 }
 
-// desenho para representar o carregamento de pacotes
-void desenho(int tam) { 
-	// temporizador para simular o tempo de carregamento
-	int temporizador = 0;
+void desenhar_pacote(int tamanho, int espaco) {
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf(",,,,,,,,,,,,,,,,\n");
 
-	// se estiver carregando o tamanho máximo da transmissão, demora 2 segundos
-	if (tam == TAMANHO_MAXIMO_PACOTE)
-		temporizador = 2;
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf("|   pacote     |\n");
 
-	// se não, demora 1 segundo
-	else 
-		temporizador = 1;
-	
-	// desenho que é exibido para simular o carregamento
-	for (int i = 0; i < 3; i++) {
-		printf("=======");		
-		
-		// função para fazer a espera da simulação
-		sleep(temporizador);
-		fflush(stdout); // flush manual por conta do sleep
-	}
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    if (tamanho > 9) printf("|  %d   bytes  |\n", tamanho);
+    else printf("|   %d bytes    |\n", tamanho);
 
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf(",,,,,,,,,,,,,,,,\n");
+}
+
+void desenhar_seta_cima(int espaco) {
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf("        ^\n");
+
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf("        |\n");
+}
+
+void desenhar_seta_baixo(int espaco) {
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf("        |\n");
+
+    for (int i = 0; i < espaco; ++i) printf("    ");
+    printf("        v\n");
 }
 
 // simulação da transmiçao de arquivos
-void transmitir_arquivo(Pacote *base, int arquivo) {
+void transmitir_arquivo(Pacote *destino, Pacote *origem, int arquivo) {
 	// conta a quantidade de pacotes, caso ele seja menor que o tamanho total, haverá apenas 1 pacote
 	int quantidade_pacotes = 1;
 
@@ -109,54 +116,66 @@ void transmitir_arquivo(Pacote *base, int arquivo) {
 	
 		// adiciona o tamanho maximo na transmissao de arquivo
 		if (i < quantidade_pacotes) {
-			inserir_pacote(base, TAMANHO_MAXIMO_PACOTE); 
+			inserir_pacote(origem, TAMANHO_MAXIMO_PACOTE); 
 		} else if (resto > 0 && i == quantidade_pacotes) { // caso exista um resto menor que a tamanho do canal, adiciona na fila
-			inserir_pacote(base, resto);
+			inserir_pacote(origem, resto);
 		}
 		
 	}
+    
+    int *espaco = malloc(quantidade_pacotes + 1);
+    int pacote_da_vez = quantidade_pacotes;
+    while (1) {
+        system("clear");
+        // exibição da simulação de transmissao
+        Pacote *pacote_temporario = origem->proximo;
+        for (int i = 1; i < quantidade_pacotes+1; i++) {
+            if (espaco[i] == 0) {
+                if (i == 1) printf("       null\n");
+                desenhar_seta_cima(espaco[i]);
+            }
+            desenhar_pacote(pacote_temporario->tamanho, espaco[i]);
 
-	// auxiliar que irá fazer a soma da transmissao
-	int conta = 0;
-	
-	// exibição da simulação de transmissao
-	for (int i = 1; i < quantidade_pacotes+1; i++) {
-		// exibe qual pacote está sendo transmitido e quantidade total
-		printf("\nPacote %d/%d ", i, quantidade_pacotes);
-		
-		// mostra as bytes a serem transmitidas
-		printf(" (%d bytes) \n| ", base->proximo->tamanho);
+            if (espaco[i] == 10) {
+                desenhar_seta_baixo(espaco[i]);
+                if (i >= quantidade_pacotes && espaco[i] == 10) {
+                    for (int j = 0; j < espaco[i]; ++j) printf("    ");
+                    printf("       null\n");
+                }
+            } else {
+                printf("\n\n");
+            }
 
-		// desenha a barra de progresso
-		desenho(base->proximo->tamanho);			
-		
-		// incrementa o tamanho do primeiro elemento na fila
-		conta += base->proximo->tamanho;
-
-		// exibe o resultado da transmissao
-		printf(" | recebido: %d bytes\n", conta);
-
-		// verifica se existem elementos na fila para passar para o proximo elemento
-		if (base->proximo != NULL) {
-			remover_elemento(base);
-		}
-	}
+            if (pacote_temporario->proximo) {
+                pacote_temporario = pacote_temporario->proximo;
+            }
+            if (i == pacote_da_vez) {
+                espaco[i]++;
+            }
+            if (espaco[pacote_da_vez] == 10) {
+                pacote_da_vez--;
+            }
+        }
+        sleep(1);
+    }
+    free(espaco);
 }
 
 
 int main(void) {
 	// primeiro pacote da fila
-    Pacote pacote = {.proximo = NULL};
+    Pacote origem = {.proximo = NULL};
+    Pacote destino = {.proximo = NULL};
 
 	// variavel para o tamanho do arquivo
-    int arquivo = 0;
+    int tamanho_arquivo = 0;
 
 	// recebe o tamanho do arquivo do usuario
 	printf("insira o tamanho do arquivo: ");
-	scanf("%d", &arquivo);
+	scanf("%d", &tamanho_arquivo);
 
 	// faz a simulação da transmissao
-	transmitir_arquivo(&pacote, arquivo);
+	transmitir_arquivo(&destino, &origem, tamanho_arquivo);
 
 	// demonstra a finalização de transmissao
 	printf("\ntransmissão concluida!!\n");
